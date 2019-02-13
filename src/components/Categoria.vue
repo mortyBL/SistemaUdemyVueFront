@@ -85,9 +85,11 @@
   
 </template>
 <script>
+  import axios from 'axios'
   export default {
     data(){
       return {
+          categorias:[],
           dialog: false,
           headers: [
             {
@@ -134,11 +136,22 @@
     },
 
     created () {
-      this.initialize()
+      this.initialize();
+      this.listar();
     },
 
     methods: {
-       initialize () {
+      listar(){
+        let me = this;
+        axios.get(  'api/Categorias/Listar').then(function(response){
+          console.log(response)
+          me.categorias=response.data;
+        }).catch(function(error){
+          console.log(error)
+        })
+      },
+
+      initialize () {
         this.desserts = [
           {
             name: 'Frozen Yogurt',
