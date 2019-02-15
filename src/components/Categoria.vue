@@ -12,37 +12,33 @@
               <v-text-field class="text-xs-center" v-model="search" append-icon="search" label="Búsqueda" single-line hide-details></v-text-field>
               <v-spacer></v-spacer>
               <v-dialog v-model="dialog" max-width="500px">
-                  <v-btn slot="activator" color="primary" dark class="mb-2">Nueva Categoría</v-btn>
+                  <v-btn slot="activator" color="primary" dark class="mb-2">Nuevo</v-btn>
                   <v-card>
                     <v-card-title class="justify-center">
                         <span class="headline">{{ formTitle }}</span>
                     </v-card-title>
                     <v-card-text>
                         <v-container grid-list-md>
-                        <v-layout wrap>
-                            <v-flex xs12 sm6 md4>
-                            <v-text-field v-model="editedItem.name" label="Dessert name"></v-text-field>
-                            </v-flex>
-                            <v-flex xs12 sm6 md4>
-                            <v-text-field v-model="editedItem.calories" label="Calories"></v-text-field>
-                            </v-flex>
-                            <v-flex xs12 sm6 md4>
-                            <v-text-field v-model="editedItem.fat" label="Fat (g)"></v-text-field>
-                            </v-flex>
-                            <v-flex xs12 sm6 md4>
-                            <v-text-field v-model="editedItem.carbs" label="Carbs (g)"></v-text-field>
-                            </v-flex>
-                            <v-flex xs12 sm6 md4>
-                            <v-text-field v-model="editedItem.protein" label="Protein (g)"></v-text-field>
-                            </v-flex>
-                        </v-layout>
+                          <v-layout wrap>
+                              <v-flex xs12 sm12 md12>
+                                <v-text-field v-model="nombre" label="Nombre"></v-text-field>
+                              </v-flex>
+                              <v-flex xs12 sm12 md12>
+                                <v-text-field v-model="descripcion" label="Descripción"></v-text-field>
+                              </v-flex>
+                              <v-flex xs12 sm12 md12 v-show="valida">
+                                <div class="red--text" v-for="v in validamensaje" :key="v" v-text="v">
+                                </div>
+                              </v-flex>
+                          </v-layout>
                         </v-container>
                     </v-card-text>
 
                     <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn color="blue darken-1" flat @click="close">Cancel</v-btn>
-                        <v-btn color="blue darken-1" flat @click="save">Save</v-btn>
+                          <v-btn color="blue darken-1" flat @click="close">Cancerlar</v-btn>
+                          <v-btn color="blue darken-1" flat @click="guardar">Guardar</v-btn>
+                        <v-spacer></v-spacer>
                     </v-card-actions>
                   </v-card>
               </v-dialog>
@@ -76,10 +72,11 @@
             </v-data-table>
       </v-flex>
   </v-layout>
-  
 </template>
+
 <script>
   import axios from 'axios'
+
   export default {
     data(){
       return {
@@ -100,18 +97,16 @@
             carbs: 0,
             protein: 0
           },
-          defaultItem: {
-            name: '',
-            calories: 0,
-            fat: 0,
-            carbs: 0,
-            protein: 0
-          }
+          id: '',
+          nombre: '',
+          descripcion: '',
+          valida: 0,
+          validamensaje: []
       }
     },
     computed: {
       formTitle () {
-        return this.editedIndex === -1 ? 'Nueva Categoría' : 'Editar Categoría'
+        return this.editedIndex === -1 ? 'Nueva Categoría' : 'Actualizar Categoría'
       }
     },
 
@@ -149,19 +144,48 @@
 
       close () {
         this.dialog = false
-        setTimeout(() => {
-          this.editedItem = Object.assign({}, this.defaultItem)
-          this.editedIndex = -1
-        }, 300)
       },
 
-      save () {
-        if (this.editedIndex > -1) {
-          Object.assign(this.desserts[this.editedIndex], this.editedItem)
-        } else {
-          this.desserts.push(this.editedItem)
+      limpiar(){
+          this.id="";
+          this.nombre="";
+          this.descripcion="";
+      },
+
+      guardar () {
+        if(this.validar()){   // validar() = 1
+          return
         }
-        this.close()
+        if (this.editedIndex > -1) {
+          //Code to edit
+          
+        } else {
+          //Code to save
+          let me = this;
+          axios.post('api/Categorias/Crear',{
+            'nombre': me.nombre,
+            'descripcion': me.descripcion
+            }).then(function(response){
+              me.close();
+              me.listar();
+              me.limpiar();
+            }).catch(function(error){
+              console.log(error);
+            })
+        }
+      },
+
+      validar() {
+          this.valida = 0;
+          this.validamensaje = [];
+
+          if(this.nombre.length < 3 || this.nombre.lenght > 50){
+              this.validamensaje.push("El nombre debe de tener más de 3 caracteres y menos de 50 caracteres")
+          }
+          if(this.validamensaje.length){
+              this.valida=1;
+          }
+          return this.valida;
       }
     }
   }
