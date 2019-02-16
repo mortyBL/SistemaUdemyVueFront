@@ -55,6 +55,7 @@
                   <v-icon small class="mr-2" @click="editItem(props.item)">edit</v-icon>
                   <v-icon small @click="deleteItem(props.item)">delete</v-icon>
                   </td>
+                  <td class="text-xs-center">{{ props.item.idcategoria }}</td>
                   <td class="text-xs-left">{{ props.item.nombre }}</td>
                   <td class="text-xs-left">{{ props.item.descripcion }}</td>
                   <td> 
@@ -67,7 +68,7 @@
                   </td>
             </template>
             <template slot="no-data">
-                <v-btn color="primary" @click="initialize">Resetear</v-btn>
+                <v-btn color="primary" @click="listar">Resetear</v-btn>
             </template>
             </v-data-table>
       </v-flex>
@@ -84,19 +85,13 @@
           dialog: false,
           headers: [
             { text: 'Opciones', value: 'opciones', align : 'center' ,sortable: false },
+            { text: 'ID', value: 'id', align : 'center'},
             { text: 'Nombres', value: 'nombre' },
             { text: 'Descripción', value: 'descripcion',sorteable: false },
             { text: 'Estado', value: 'condicion',sorteable: false }
           ],
           search: '',
           editedIndex: -1,
-          editedItem: {
-            name: '',
-            calories: 0,
-            fat: 0,
-            carbs: 0,
-            protein: 0
-          },
           id: '',
           nombre: '',
           descripcion: '',
@@ -132,8 +127,10 @@
       },
 
       editItem (item) {
-        this.editedIndex = this.desserts.indexOf(item)
-        this.editedItem = Object.assign({}, item)
+        this.id=item.idcategoria;
+        this.nombre=item.nombre;
+        this.descripcion=item.descripcion;
+        this.editedIndex=1;
         this.dialog = true
       },
 
@@ -144,12 +141,14 @@
 
       close () {
         this.dialog = false
+        this.limpiar();
       },
 
       limpiar(){
           this.id="";
           this.nombre="";
           this.descripcion="";
+          this.editedIndex= -1;
       },
 
       guardar () {
@@ -158,6 +157,18 @@
         }
         if (this.editedIndex > -1) {
           //Code to edit
+          let me = this;
+          axios.put('api/Categorias/Actualizar',{
+            'idcategoria': me.id,
+            'nombre': me.nombre,
+            'descripcion': me.descripcion
+            }).then(function(response){
+              me.close();
+              me.listar();
+              me.limpiar();
+            }).catch(function(error){
+              console.log(error);
+            })
           
         } else {
           //Code to save
@@ -194,3 +205,5 @@
 table th + th { border-left:1px solid #dddddd; }
 table td + td { border-left:1px solid #dddddd; }
 </style>
+
+
