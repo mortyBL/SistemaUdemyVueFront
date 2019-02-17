@@ -36,8 +36,32 @@
 
                     <v-card-actions>
                         <v-spacer></v-spacer>
-                          <v-btn color="blue darken-1" flat @click="close">Cancerlar</v-btn>
+                          <v-btn color="blue darken-1" flat @click="close">Cancelar</v-btn>
                           <v-btn color="blue darken-1" flat @click="guardar">Guardar</v-btn>
+                        <v-spacer></v-spacer>
+                    </v-card-actions>
+                  </v-card>
+              </v-dialog>
+              <!-- AD MODAL STARTS HERE ---->
+              <v-dialog v-model="adModal" max-width="290">
+                  <v-card>
+                      <v-card-title class="justify-center" v-if="adAccion==1">
+                        <span class="headline">¿Activar Item?</span>
+                      </v-card-title>
+                      <v-card-title class="justify-center" v-if="adAccion==2">
+                        <span class="headline">¿Desactivar Item?</span>
+                      </v-card-title>
+                      <v-card-text>
+                           Estas a punto de 
+                           <span v-if="adAccion==1">Activar</span>
+                           <span v-if="adAccion==2">Desactivar</span>
+                           el Item {{adNombre}}                           
+                      </v-card-text>
+                      <v-card-actions>
+                        <v-spacer></v-spacer>
+                          <v-btn v-if="adAccion" color="green darken-1" flat="flat" @click="activarDesactivarCerrar">Cancelar</v-btn>
+                          <v-btn v-if="adAccion==1" color="orange darken-1" flat="flat" @click="activar">Activar</v-btn>
+                          <v-btn v-if="adAccion==2" color="orange darken-1" flat="flat" @click="desactivar">Desactivar</v-btn>
                         <v-spacer></v-spacer>
                     </v-card-actions>
                   </v-card>
@@ -52,10 +76,15 @@
             >
             <template slot="items" slot-scope="props">
                   <td class="text-xs-center">
-                  <v-icon small class="mr-2" @click="editItem(props.item)">edit</v-icon>
-                  <v-icon small @click="deleteItem(props.item)">delete</v-icon>
+                    <v-icon small class="mr-2" @click="editItem(props.item)">edit</v-icon>
+                    <template v-if="props.item.condicion">
+                      <v-icon small @click="activarDesactivarMostrar(2,props.item)">block</v-icon>
+                    </template>
+                    <template v-else>
+                      <v-icon small @click="activarDesactivarMostrar(1,props.item)">check</v-icon>
+                    </template>
                   </td>
-                  <td class="text-xs-center">{{ props.item.idcategoria }}</td>
+                  <!-- <td class="text-xs-center">{{ props.item.idcategoria }}</td> -->
                   <td class="text-xs-left">{{ props.item.nombre }}</td>
                   <td class="text-xs-left">{{ props.item.descripcion }}</td>
                   <td> 
@@ -84,8 +113,8 @@
           categorias:[],
           dialog: false,
           headers: [
-            { text: 'Opciones', value: 'opciones', align : 'center' ,sortable: false },
-            { text: 'ID', value: 'id', align : 'center'},
+            { text: 'Opciones', value: 'opciones',sortable: false , align : 'center'},
+            // { text: 'ID', value: 'id', align : 'center' ,sorteable: false},
             { text: 'Nombres', value: 'nombre' },
             { text: 'Descripción', value: 'descripcion',sorteable: false },
             { text: 'Estado', value: 'condicion',sorteable: false }
@@ -96,7 +125,11 @@
           nombre: '',
           descripcion: '',
           valida: 0,
-          validamensaje: []
+          validamensaje: [],
+          adModal: false,
+          adAccion: 0,
+          adNombre : '',
+          adId : ''
       }
     },
     computed: {
@@ -197,7 +230,53 @@
               this.valida=1;
           }
           return this.valida;
-      }
+      },
+
+      activarDesactivarMostrar(accion,item){
+          this.adModal = true;
+          this.adNombre = item.nombre;
+          this.adId = item.idcategoria;
+
+          if(accion==1){
+            this.adAccion = 1;
+          }
+          else if(accion==2){
+            this.adAccion = 2;           
+          }
+          else{
+              this.adModal= false;
+          }
+      },
+      
+      activarDesactivarCerrar(){
+        this.adModal=false;
+      },
+
+      activar(){
+          let me = this;
+            axios.put('api/Categorias/Activar/'+this.adId,{}).then(function(response){
+                me.adModal=false,
+                me.adAccion = 0,
+                me.adId = "",
+                me.adNombre = "";
+                me.listar();
+              }).catch(function(error){
+                console.log(error);
+              })
+      },
+
+      desactivar(){
+          let me = this;
+            axios.put('api/Categorias/Desactivar/'+this.adId,{}).then(function(response){
+                me.adModal=false,
+                me.adAccion = 0,
+                me.adId='',
+                me.adNombre = '';
+                me.listar();
+              }).catch(function(error){
+                console.log(error);
+              })
+      }     
     }
   }
 </script>
