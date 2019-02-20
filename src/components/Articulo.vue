@@ -2,7 +2,7 @@
   <v-layout align-start>
       <v-flex>
             <v-toolbar flat color="#b2dfdb">
-              <v-toolbar-title>Categorías</v-toolbar-title>
+              <v-toolbar-title>Artículos</v-toolbar-title>
               <v-divider
                   class="mx-2"
                   inset
@@ -70,7 +70,7 @@
             <!-- DATA TABLE STARTS HERE -->
             <v-data-table
             :headers="headers"
-            :items="categorias"
+            :items="articulos"
             :search="search"
             class="elevation-3"
             >
@@ -84,7 +84,11 @@
                       <v-icon small @click="activarDesactivarMostrar(1,props.item)">check</v-icon>
                     </template>
                   </td>
+                  <td class="text-xs-left">{{ props.item.codigo }}</td>                  
                   <td class="text-xs-left">{{ props.item.nombre }}</td>
+                  <td class="text-xs-left">{{ props.item.categoria }}</td>
+                  <td class="text-xs-left">{{ props.item.stock }}</td>
+                  <td class="text-xs-left">{{ props.item.precio_venta }}</td>
                   <td class="text-xs-left">{{ props.item.descripcion }}</td>
                   <td> 
                     <div v-if="props.item.condicion">
@@ -109,12 +113,15 @@
   export default {
     data(){
       return {
-          categorias:[],
+          articulos:[],
           dialog: false,
           headers: [
             { text: 'Opciones', value: 'opciones',sortable: false , align : 'center'},
-            // { text: 'ID', value: 'id', align : 'center' ,sorteable: false},
-            { text: 'Nombres', value: 'nombre' },
+            { text: 'Código', value: 'codigo',sortable: false , align : 'center'},           
+            { text: 'Nombre', value: 'nombre', align : 'center'},
+            { text: 'Categoría', value: 'categoria', align : 'center'},   
+            { text: 'Stock', value: 'stock', align : 'center', sortable : 'false'},                       
+            { text: 'Precio Venta', value: 'precio_venta',sortable: false , align : 'center'},                       
             { text: 'Descripción', value: 'descripcion',sorteable: false },
             { text: 'Estado', value: 'condicion',sorteable: false }
           ],
@@ -150,9 +157,9 @@
     methods: {
       listar(){
         let me = this;
-        axios.get('api/Categorias/Listar').then(function(response){
+        axios.get('api/Articulos/Listar').then(function(response){
           //console.log(response)
-          me.categorias=response.data;
+          me.articulos=response.data;
         }).catch(function(error){
           //console.log(error)
         })
@@ -283,5 +290,3 @@
 table th + th { border-left:1px solid #dddddd; }
 table td + td { border-left:1px solid #dddddd; }
 </style>
-
-
