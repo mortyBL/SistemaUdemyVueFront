@@ -11,6 +11,7 @@
               <v-spacer></v-spacer>
               <v-text-field class="text-xs-center" v-model="search" append-icon="search" label="Búsqueda" single-line hide-details></v-text-field>
               <v-spacer></v-spacer>
+              <!-- DIALOG STARTS HERE -->
               <v-dialog v-model="dialog" max-width="500px">
                   <v-btn slot="activator" color="primary" dark class="mb-2">Nuevo</v-btn>
                   <v-card>
@@ -20,12 +21,34 @@
                     <v-card-text>
                         <v-container grid-list-md>
                           <v-layout wrap>
+                              <!--SLOT CÓDIGO -->
+                              <v-flex xs6 sm6 md6>
+                                <v-text-field v-model="codigo" label="Código">
+                                </v-text-field>
+                              </v-flex>
+                              <!-- SLOT CATEGORÍAS -->
+                              <v-flex xs6 sm6 md6>
+                                <v-select v-model="idcategoria"
+                                :items="categorias" label="Categoría">
+                                </v-select>
+                              </v-flex>
+                              <!-- SLOT NAME -->
                               <v-flex xs12 sm12 md12>
                                 <v-text-field v-model="nombre" label="Nombre"></v-text-field>
                               </v-flex>
+                              <!-- SLOT STOCK  -->
+                              <v-flex xs6 sm6 md6>
+                                <v-text-field type="number" v-model="stock" label="Stock"></v-text-field>
+                              </v-flex>
+                              <!-- SLOT PRECIO VENTA -->
+                              <v-flex xs6 sm6 md6>
+                                <v-text-field type="number" v-model="precio_venta" label="Precio Venta"></v-text-field>
+                              </v-flex>
+                              <!-- SLOT DESCRIPCION -->
                               <v-flex xs12 sm12 md12>
                                 <v-text-field v-model="descripcion" label="Descripción"></v-text-field>
                               </v-flex>
+
                               <v-flex xs12 sm12 md12 v-show="valida">
                                 <div class="red--text" v-for="v in validamensaje" :key="v" v-text="v">
                                 </div>
@@ -128,7 +151,12 @@
           search: '',
           editedIndex: -1,
           id: '',
+          idcategoria : '', 
+          categorias : [],
+          codigo: '',
           nombre: '',
+          stock: 0,
+          precio_venta: 0,
           descripcion: '',
           valida: 0,
           validamensaje: [],
@@ -140,7 +168,7 @@
     },
     computed: {
       formTitle () {
-        return this.editedIndex === -1 ? 'Nueva Categoría' : 'Actualizar Categoría'
+        return this.editedIndex === -1 ? 'Nuevo Artículo' : 'Actualizar artículo'
       }
     },
 
@@ -152,6 +180,7 @@
 
     created () {
       this.listar();
+      this.select();
     },
 
     methods: {
@@ -160,6 +189,20 @@
         axios.get('api/Articulos/Listar').then(function(response){
           //console.log(response)
           me.articulos=response.data;
+        }).catch(function(error){
+          //console.log(error)
+        })
+      },
+
+      select(){
+        let me = this;
+        var categoriasArray = [] ;
+        axios.get('api/Categorias/Select').then(function(response){
+          //console.log(response)
+          categoriasArray=response.data;
+          categoriasArray.map(function(x){
+              me.categorias.push({text: x.nombre,value: x.idcategoria});
+          });
         }).catch(function(error){
           //console.log(error)
         })
