@@ -304,7 +304,7 @@
       activarDesactivarMostrar(accion,item){
           this.adModal = true;
           this.adNombre = item.nombre;
-          this.adId = item.idcategoria;
+          this.adId = item.idarticulo;
 
           if(accion==1){
             this.adAccion = 1;
@@ -323,7 +323,7 @@
 
       activar(){
           let me = this;
-            axios.put('api/Categorias/Activar/'+this.adId,{}).then(function(response){
+            axios.put('api/Articulos/Activar/'+this.adId,{}).then(function(response){
                 me.adModal=false,
                 me.adAccion = 0,
                 me.adId = "",
@@ -336,7 +336,7 @@
 
       desactivar(){
           let me = this;
-            axios.put('api/Categorias/Desactivar/'+this.adId,{}).then(function(response){
+            axios.put('api/Articulos/Desactivar/'+this.adId,{}).then(function(response){
                 me.adModal=false,
                 me.adAccion = 0,
                 me.adId='',
