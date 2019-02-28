@@ -21,34 +21,44 @@
                     <v-card-text>
                         <v-container grid-list-md>
                           <v-layout wrap>
-                              <!--SLOT CÓDIGO -->
-                              <v-flex xs6 sm6 md6>
-                                <v-text-field v-model="codigo" label="Código">
+                              <!--SLOT NOMBRE -->
+                              <v-flex xs12 sm6 md6>
+                                <v-text-field v-model="nombre" label="Nombre">
                                 </v-text-field>
                               </v-flex>
-                              <!-- SLOT CATEGORÍAS -->
-                              <v-flex xs6 sm6 md6>
-                                <v-select v-model="idcategoria"
-                                :items="categorias" label="Categoría">
+                              <!-- SLOT ROL SELECT-->
+                              <v-flex xs12 sm6 md6>
+                                <v-select v-model="idrol"
+                                :items="roles" label="Rol">
                                 </v-select>
                               </v-flex>
-                              <!-- SLOT NAME -->
-                              <v-flex xs12 sm12 md12>
-                                <v-text-field v-model="nombre" label="Nombre"></v-text-field>
+                              <!-- SLOT TIPO DOCUMENTO SELECT -->
+                              <v-flex xs12 sm6 md6>
+                                 <v-select v-model="tipo_documento"
+                                  :items="documentos" label="Tipo Documentos">
+                                 </v-select>
                               </v-flex>
-                              <!-- SLOT STOCK  -->
-                              <v-flex xs6 sm6 md6>
-                                <v-text-field type="number" v-model="stock" label="Stock"></v-text-field>
+                              <!-- SLOT NUMERO DOCUMENTO  -->
+                              <v-flex xs12 sm6 md6>
+                                <v-text-field v-model="num_documento" label="Número Documento"></v-text-field>
                               </v-flex>
-                              <!-- SLOT PRECIO VENTA -->
-                              <v-flex xs6 sm6 md6>
-                                <v-text-field type="number" v-model="precio_venta" label="Precio Venta"></v-text-field>
+                              <!-- SLOT DIRECCIÓN -->
+                              <v-flex xs12 sm6 md6>
+                                <v-text-field v-model="direccion" label="Dirección"></v-text-field>
                               </v-flex>
-                              <!-- SLOT DESCRIPCION -->
-                              <v-flex xs12 sm12 md12>
-                                <v-text-field v-model="descripcion" label="Descripción"></v-text-field>
+                              <!-- SLOT EMAIL -->
+                              <v-flex xs12 sm6 md6>
+                                <v-text-field v-model="telefono" label="Teléfono"></v-text-field>
                               </v-flex>
-
+                              <!-- SLOT EMAIL -->
+                              <v-flex xs12 sm6 md6>
+                                <v-text-field v-model="email" label="Email"></v-text-field>
+                              </v-flex>
+                              <!-- SLOT PASSWORD -->
+                              <v-flex xs12 sm6 md6>
+                                <v-text-field type="password" v-model="password" label="Password"></v-text-field>
+                              </v-flex>
+                              <!-- LABEL VALIDA -->
                               <v-flex xs12 sm12 md12 v-show="valida">
                                 <div class="red--text" v-for="v in validamensaje" :key="v" v-text="v">
                                 </div>
@@ -69,16 +79,16 @@
               <v-dialog v-model="adModal" max-width="290">
                   <v-card>
                       <v-card-title class="justify-center" v-if="adAccion==1">
-                        <span class="headline">¿Activar Item?</span>
+                        <span class="headline">¿Activar Usuario?</span>
                       </v-card-title>
                       <v-card-title class="justify-center" v-if="adAccion==2">
-                        <span class="headline">¿Desactivar Item?</span>
+                        <span class="headline">¿Desactivar Usuario?</span>
                       </v-card-title>
                       <v-card-text>
                            Estas a punto de 
                            <span v-if="adAccion==1">Activar</span>
                            <span v-if="adAccion==2">Desactivar</span>
-                           el Item {{adNombre}}                           
+                           al usuario {{adNombre}}                           
                       </v-card-text>
                       <v-card-actions>
                         <v-spacer></v-spacer>
@@ -147,19 +157,24 @@
             { text: 'Num. Documento', value: 'num_documento', align : 'center',sortable: false},
             { text: 'Dirección', value: 'direccion', align : 'center',sortable: false},   
             { text: 'Teléfono', value: 'telefono', align : 'center', sortable : false},                       
-            { text: 'Email', value: 'email',sorteable: false },
-            { text: 'Estado', value: 'condicion',sorteable: false },
+            { text: 'Email', value: 'email',sortable: false },
+            { text: 'Estado', value: 'condicion',sortable: false },
           ],
           search: '',
           editedIndex: -1,
           id: '',
-          idcategoria : '', 
-          categorias : [],
-          codigo: '',
+          idrol : '', 
+          roles : [],
           nombre: '',
-          stock: 0,
-          precio_venta: 0,
-          descripcion: '',
+          tipo_documento: '',
+          documentos: ['DNI','RUC','PASAPORTE','CEDULA'],
+          num_documento : '',
+          direccion: '',
+          telefono: '',
+          email: '',
+          password: '',
+          actPassword: false,
+          passwordAnt:'',
           valida: 0,
           validamensaje: [],
           adModal: false,
@@ -170,7 +185,7 @@
     },
     computed: {
       formTitle () {
-        return this.editedIndex === -1 ? 'Nuevo Artículo' : 'Actualizar artículo'
+        return this.editedIndex === -1 ? 'Nuevo Usuario' : 'Actualizar Usuario'
       }
     },
 
@@ -198,12 +213,12 @@
 
       select(){
         let me = this;
-        var categoriasArray = [] ;
-        axios.get('api/Categorias/Select').then(function(response){
+        var RolesArray = [] ;
+        axios.get('api/Roles/Select').then(function(response){
           //console.log(response)
-          categoriasArray=response.data;
-          categoriasArray.map(function(x){
-              me.categorias.push({text: x.nombre,value: x.idcategoria});
+          RolesArray=response.data;
+          RolesArray.map(function(x){
+              me.roles.push({text: x.nombre,value: x.idrol});
           });
         }).catch(function(error){
           //console.log(error)
@@ -211,13 +226,16 @@
       },
 
       editItem (item) {
-        this.id=item.idarticulo;
-        this.idcategoria=item.idcategoria;
-        this.codigo=item.codigo;
+        this.id=item.idusuario;
+        this.idrol=item.idrol;
         this.nombre=item.nombre;
-        this.stock=item.stock;
-        this.precio_venta=item.precio_venta;
-        this.descripcion=item.descripcion;
+        this.tipo_documento=item.tipo_documento;
+        this.num_documento=item.num_documento;
+        this.direccion=item.direccion;
+        this.telefono=item.telefono;
+        this.email=item.email;
+        this.password=item.password_hash;
+        this.passwordAnt=item.password_hash;
         this.editedIndex=1;
         this.dialog = true
       },
@@ -229,12 +247,16 @@
 
       limpiar(){
           this.id="";
-          this.idcategoria="";
-          this.codigo="";
+          this.idrol="";
           this.nombre="";
-          this.stock="";
-          this.precio_venta="";
-          this.descripcion="";
+          this.tipo_documento="";
+          this.num_documento="";
+          this.direccion="";
+          this.telefono="";
+          this.email="";
+          this.password="";
+          this.passwordAnt="";
+          this.actPassword= false;
           this.editedIndex= -1;
       },
 
@@ -245,14 +267,22 @@
         if (this.editedIndex > -1) {
           //Code to edit
           let me = this;
-          axios.put('api/Articulos/Actualizar',{
-            'idarticulo': me.id,
-            'idcategoria': me.idcategoria,
-            'codigo': me.codigo,
+
+          if(me.password!=me.passwordAnt){
+             me.actPassword=true;
+          }
+
+          axios.put('api/Usuarios/Actualizar',{
+            'idusuario': me.id,
+            'idrol': me.idrol,
             'nombre': me.nombre,
-            'stock': me.stock,
-            'precio_venta': me.precio_venta,
-            'descripcion': me.descripcion
+            'tipo_documento': me.tipo_documento,
+            'num_documento': me.num_documento,
+            'direccion': me.direccion,
+            'telefono': me.telefono,
+            'email': me.email,
+            'password': me.password,
+            'act_password': me.actPassword,
             }).then(function(response){
               me.close();
               me.listar();
@@ -264,13 +294,15 @@
         } else {
           //Code to save
           let me = this;
-          axios.post('api/Articulos/Crear',{
-            'idcategoria': me.idcategoria,
-            'codigo': me.codigo,
+          axios.post('api/Usuarios/Crear',{
+            'idrol': me.idrol,
             'nombre': me.nombre,
-            'stock': me.stock,
-            'precio_venta': me.precio_venta,
-            'descripcion': me.descripcion
+            'tipo_documento': me.tipo_documento,
+            'num_documento': me.num_documento,
+            'direccion': me.direccion,
+            'telefono': me.telefono,
+            'email': me.email,
+            'password': me.password,
             }).then(function(response){
               me.close();
               me.listar();
@@ -285,17 +317,23 @@
           this.valida = 0;
           this.validamensaje = [];
 
-          if(this.nombre.length < 3 || this.nombre.lenght > 50){
-              this.validamensaje.push("El nombre debe de tener más de 3 caracteres y menos de 50 caracteres.")
+          if(this.nombre.length < 3 || this.nombre.lenght > 100){
+              this.validamensaje.push("El nombre debe de tener más de 3 caracteres y menos de 100 caracteres.")
           }
-          if(!this.idcategoria){
-              this.validamensaje.push("Seleciona una Categoría para este producto.")
+          if(!this.idrol){
+              this.validamensaje.push("Sekeccione un rol para el usuario.")
           }
-          if(!this.stock || this.stock==0){
-              this.validamensaje.push("Ingrese el stock inicial del artículo.")
+          if(!this.tipo_documento){
+              this.validamensaje.push("Seleccione un tipo de documento.")
           }
-          if(!this.precio_venta || this.precio_venta==0){
-              this.validamensaje.push("Ingrese el precio de venta de este artículo.")
+          if(!this.num_documento){
+              this.validamensaje.push("Ingrese un número de documento.")
+          }
+          if(!this.email){
+              this.validamensaje.push("Ingrese el email del usuario.")
+          }
+          if(!this.password){
+              this.validamensaje.push("Ingrese el password del usuario.")
           }
           if(this.validamensaje.length){
               this.valida=1;
@@ -306,7 +344,7 @@
       activarDesactivarMostrar(accion,item){
           this.adModal = true;
           this.adNombre = item.nombre;
-          this.adId = item.idarticulo;
+          this.adId = item.idusuario;
 
           if(accion==1){
             this.adAccion = 1;
@@ -325,7 +363,7 @@
 
       activar(){
           let me = this;
-            axios.put('api/Articulos/Activar/'+this.adId,{}).then(function(response){
+            axios.put('api/Usuarios/Activar/'+this.adId,{}).then(function(response){
                 me.adModal=false,
                 me.adAccion = 0,
                 me.adId = "",
@@ -338,7 +376,7 @@
 
       desactivar(){
           let me = this;
-            axios.put('api/Articulos/Desactivar/'+this.adId,{}).then(function(response){
+            axios.put('api/Usuarios/Desactivar/'+this.adId,{}).then(function(response){
                 me.adModal=false,
                 me.adAccion = 0,
                 me.adId='',
