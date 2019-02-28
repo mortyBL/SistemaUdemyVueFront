@@ -113,10 +113,10 @@
           dialog: false,
           headers: [
             { text: 'Opciones', value: 'opciones',sortable: false , align : 'center'},
-            // { text: 'ID', value: 'id', align : 'center' ,sorteable: false},
+            // { text: 'ID', value: 'id', align : 'center' ,sortable: false},
             { text: 'Nombres', value: 'nombre' },
-            { text: 'Descripción', value: 'descripcion',sorteable: false },
-            { text: 'Estado', value: 'condicion',sorteable: false }
+            { text: 'Descripción', value: 'descripcion',sortable: false },
+            { text: 'Estado', value: 'condicion',sortable: false }
           ],
           search: '',
           editedIndex: -1,

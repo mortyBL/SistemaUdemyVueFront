@@ -49,8 +49,8 @@
           dialog: false,
           headers: [
             { text: 'Nombres', value: 'nombre' },
-            { text: 'Descripción', value: 'descripcion',sorteable: false },
-            { text: 'Estado', value: 'condicion',sorteable: false }
+            { text: 'Descripción', value: 'descripcion',sortable: false },
+            { text: 'Estado', value: 'condicion',sortable: false }
           ],
           search: '',
 

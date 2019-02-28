@@ -145,8 +145,8 @@
             { text: 'Categoría', value: 'categoria', align : 'center'},   
             { text: 'Stock', value: 'stock', align : 'center', sortable : 'false'},                       
             { text: 'Precio Venta', value: 'precio_venta',sortable: false , align : 'center'},                       
-            { text: 'Descripción', value: 'descripcion',sorteable: false },
-            { text: 'Estado', value: 'condicion',sorteable: false }
+            { text: 'Descripción', value: 'descripcion',sortable: false },
+            { text: 'Estado', value: 'condicion',sortable: false }
           ],
           search: '',
           editedIndex: -1,
