@@ -7,11 +7,12 @@ import Rol from './components/Rol.vue'
 import Usuario from './components/Usuario.vue'
 import Cliente from './components/Cliente.vue'
 import Proveedor from './components/Proveedor.vue'
+import Login from './components/Login.vue'
 
 
 Vue.use(Router)
 
-export default new Router({
+var router = new Router({
   mode: 'history',
   base: process.env.BASE_URL,
   routes: [
@@ -49,6 +50,11 @@ export default new Router({
       path: '/proveedores',
       name: 'proveedores',
       component : Proveedor
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component : Login
     },
   ]
 })
