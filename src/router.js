@@ -21,7 +21,7 @@ var router = new Router({
       path: '/',
       name: 'home',
       component: Home,
-      meta: Store.
+      
     },
     {
       path: '/categorias',
