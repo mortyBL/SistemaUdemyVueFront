@@ -15,7 +15,7 @@
                 </v-card-text>
                 <v-card-actions class="px-3 pb-3">
                     <v-flex text-xs-right>
-                        <v-btn color="primary">Ingresar</v-btn>
+                        <v-btn @click="ingresar" color="primary">Ingresar</v-btn>
                     </v-flex>
                 </v-card-actions>
             </v-card>
@@ -24,11 +24,28 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
     data(){
         return{
             email : '',
             password : ''
+        }
+    },
+    methods :{
+        ingresar(){
+            axios.post('/api/Usuarios/Login', { email : this.email, password : this.password})
+                    .then(respuesta => {
+                        return respuesta.data
+                    })
+                    .then(data => {
+                        this.$store.dispatch("guardarToken", data.token)
+                        this.$router.push({ name : 'home'})
+                    })            
+                    .catch(err => {
+                        console.log(err)
+                    }) 
         }
     }
 }

@@ -8,6 +8,7 @@ import Usuario from './components/Usuario.vue'
 import Cliente from './components/Cliente.vue'
 import Proveedor from './components/Proveedor.vue'
 import Login from './components/Login.vue'
+import Store from './store'
 
 
 Vue.use(Router)
@@ -19,7 +20,8 @@ var router = new Router({
     {
       path: '/',
       name: 'home',
-      component: Home
+      component: Home,
+      meta: Store.
     },
     {
       path: '/categorias',
