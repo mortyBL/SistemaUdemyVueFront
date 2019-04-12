@@ -20,7 +20,9 @@
                 </v-card-actions>
             </v-card>
         </v-flex>
+        
     </v-layout>
+    
 </template>
 
 <script>
